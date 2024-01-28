@@ -1,10 +1,22 @@
-import { ErrorCodes, WalletUtilsError } from "../error";
-import { NetworkType } from "../network";
-import { Transaction } from "../transaction/transaction";
-import { utxoHelper } from "../transaction/utxo";
-import { UnspentOutput } from "../types";
+const { ErrorCodes, WalletUtilsError } = require("../error");
+const { NetworkType } = require("../network");
+const { Transaction } = require("../transaction/transaction");
+const { utxoHelper } = require("../transaction/utxo");
+const { UnspentOutput } = require("../types");
 
-export async function sendInscription({
+// {
+//   assetUtxo-> UnspentOutput;
+//   btcUtxos-> UnspentOutput[];
+//   toAddress-> string;
+//   networkType-> NetworkType;
+//   changeAddress-> string;
+//   feeRate-> number;
+//   outputValue-> number;
+//   enableRBF?-> boolean;
+//   enableMixed?-> boolean;
+// }
+
+async function sendInscription({
   assetUtxo,
   btcUtxos,
   toAddress,
@@ -14,16 +26,6 @@ export async function sendInscription({
   outputValue,
   enableRBF = true,
   enableMixed = false,
-}: {
-  assetUtxo: UnspentOutput;
-  btcUtxos: UnspentOutput[];
-  toAddress: string;
-  networkType: NetworkType;
-  changeAddress: string;
-  feeRate: number;
-  outputValue: number;
-  enableRBF?: boolean;
-  enableMixed?: boolean;
 }) {
   if (utxoHelper.hasAnyAssets(btcUtxos)) {
     throw new WalletUtilsError(ErrorCodes.NOT_SAFE_UTXOS);
@@ -64,3 +66,7 @@ export async function sendInscription({
 
   return { psbt, toSignInputs };
 }
+
+module.exports = {
+  sendInscription,
+};

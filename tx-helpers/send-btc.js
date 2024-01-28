@@ -5,23 +5,25 @@ import { Transaction } from "../transaction/transaction";
 import { utxoHelper } from "../transaction/utxo";
 import { ToSignInput, UnspentOutput } from "../types";
 
-export async function sendBTC({
+// {
+//   btcUtxos-> UnspentOutput[];
+//   tos-> {
+//     address-> string;
+//     satoshis-> number;
+//   }[];
+//   networkType-> NetworkType;
+//   changeAddress-> string;
+//   feeRate-> number;
+//   enableRBF?-> boolean;
+// }
+
+async function sendBTC({
   btcUtxos,
   tos,
   networkType,
   changeAddress,
   feeRate,
   enableRBF = true,
-}: {
-  btcUtxos: UnspentOutput[];
-  tos: {
-    address: string;
-    satoshis: number;
-  }[];
-  networkType: NetworkType;
-  changeAddress: string;
-  feeRate: number;
-  enableRBF?: boolean;
 }) {
   if (utxoHelper.hasAnyAssets(btcUtxos)) {
     throw new WalletUtilsError(ErrorCodes.NOT_SAFE_UTXOS);
@@ -44,18 +46,20 @@ export async function sendBTC({
   return { psbt, toSignInputs };
 }
 
-export async function sendAllBTC({
+// {
+//   btcUtxos-> UnspentOutput[],
+//   toAddress-> string,
+//   networkType-> NetworkType,
+//   feeRate-> number,
+//   enableRBF?-> boolean,
+// }
+
+async function sendAllBTC({
   btcUtxos,
   toAddress,
   networkType,
   feeRate,
   enableRBF = true,
-}: {
-  btcUtxos: UnspentOutput[];
-  toAddress: string;
-  networkType: NetworkType;
-  feeRate: number;
-  enableRBF?: boolean;
 }) {
   if (utxoHelper.hasAnyAssets(btcUtxos)) {
     throw new WalletUtilsError(ErrorCodes.NOT_SAFE_UTXOS);
@@ -67,7 +71,7 @@ export async function sendAllBTC({
   tx.setEnableRBF(enableRBF);
   tx.addOutput(toAddress, UTXO_DUST);
 
-  const toSignInputs: ToSignInput[] = [];
+  const toSignInputs = []; //  ToSignInput[]
   btcUtxos.forEach((v, index) => {
     tx.addInput(v);
     toSignInputs.push({ index, publicKey: v.pubkey });
@@ -84,3 +88,8 @@ export async function sendAllBTC({
 
   return { psbt, toSignInputs };
 }
+
+module.exports = {
+  sendBTC,
+  sendAllBTC,
+};

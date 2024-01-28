@@ -1,8 +1,18 @@
-import { ErrorCodes, WalletUtilsError } from "../error";
-import { NetworkType } from "../network";
-import { Transaction } from "../transaction/transaction";
-import { utxoHelper } from "../transaction/utxo";
-import { ToSignInput, UnspentOutput } from "../types";
+const { ErrorCodes, WalletUtilsError } = require("../error");
+const { NetworkType } = require("../network");
+const { Transaction } = require("../transaction/transaction");
+const { utxoHelper } = require("../transaction/utxo");
+const { ToSignInput, UnspentOutput } = require("../types");
+
+// {
+//   assetUtxo-> UnspentOutput;
+//   btcUtxos-> UnspentOutput[];
+//   toAddress-> string;
+//   networkType-> NetworkType;
+//   changeAddress-> string;
+//   feeRate-> number;
+//   enableRBF?-> boolean;
+// }
 
 export async function sendAtomicalsNFT({
   assetUtxo,
@@ -12,14 +22,6 @@ export async function sendAtomicalsNFT({
   changeAddress,
   feeRate,
   enableRBF = true,
-}: {
-  assetUtxo: UnspentOutput;
-  btcUtxos: UnspentOutput[];
-  toAddress: string;
-  networkType: NetworkType;
-  changeAddress: string;
-  feeRate: number;
-  enableRBF?: boolean;
 }) {
   // safe check
   if (
@@ -43,7 +45,7 @@ export async function sendAtomicalsNFT({
   tx.setEnableRBF(enableRBF);
   tx.setChangeAddress(changeAddress);
 
-  const toSignInputs: ToSignInput[] = [];
+  const toSignInputs = []; //  ToSignInput[]
 
   // add asset
   tx.addInput(assetUtxo);
